@@ -1,0 +1,22 @@
+{
+	"name": "frontpack/composer-assets-plugin",
+	"type": "composer-plugin",
+	"description": "Composer plugin for installing of assets.",
+	"license": "BSD-3-Clause",
+	"authors": [
+		{
+			"name": "Jan Pecha",
+			"homepage": "http://www.janpecha.cz/"
+		}
+	],
+	"autoload": {
+		"classmap": ["src/"]
+	},
+	"require": {
+		"php": ">=5.4.0",
+		"composer-plugin-api": "^1.0"
+	},
+	"extra": {
+		"class": "Frontpack\\ComposerAssetsPlugin\\ComposerAssetsPlugin"
+	}
+}
