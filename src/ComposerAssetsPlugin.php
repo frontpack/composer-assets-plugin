@@ -165,8 +165,16 @@
 
 		private function processFile($sourceDir, $targetDir, $file)
 		{
-			$this->io->write('  - file ' . $file);
-			$this->createSymlink($sourceDir . '/' . $file, $targetDir . '/' . basename($file));
+			$sourcePath = $sourceDir . '/' . $file;
+
+			if (is_dir($sourcePath)) {
+				$this->io->write('  - directory ' . $file . '/');
+
+			} else {
+				$this->io->write('  - file ' . $file);
+			}
+
+			$this->createSymlink($sourcePath, $targetDir . '/' . basename($file));
 		}
 
 
