@@ -143,18 +143,22 @@
 
 			} elseif (is_array($files)) {
 				foreach ($files as $file) {
-					$this->processFile($sourceDir, $targetDir, $file);
+					$this->processFile($sourceDir, $targetDir, $file, $packageName);
 				}
 
 			} elseif (is_string($files)) {
-				$this->processFile($sourceDir, $targetDir, $files);
+				$this->processFile($sourceDir, $targetDir, $files, $packageName);
 			}
 		}
 
 
-		private function processFile($sourceDir, $targetDir, $file)
+		private function processFile($sourceDir, $targetDir, $file, $packageName)
 		{
 			$sourcePath = $sourceDir . '/' . $file;
+
+			if (!file_exists($sourcePath)) {
+				throw new FileNotFoundException("Entry '$file' not found in package '$packageName'.");
+			}
 
 			if (is_dir($sourcePath)) {
 				$this->io->write('  - directory ' . $file . '/');
