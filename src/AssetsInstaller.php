@@ -18,6 +18,9 @@
 		/** @var Composer\Util\Filesystem */
 		private $filesystem;
 
+		/** @var DefaultMapping */
+		private $defaultMapping;
+
 
 		public function __construct(Composer\Composer $composer, Composer\IO\IOInterface $io)
 		{
@@ -107,13 +110,33 @@
 			// package config
 			$extra = $package->getExtra();
 
-			if (!isset($extra['assets-files'])) {
-				return FALSE;
+			if (isset($extra['assets-files'])) {
+				$this->processFiles($packageName, $packageDir, $packageAssetsDir, $extra['assets-files']);
+				return TRUE;
 			}
 
-			$assetsFiles = $extra['assets-files'];
-			$this->processFiles($packageName, $packageDir, $packageAssetsDir, $assetsFiles);
-			return TRUE;
+			// default config
+			$defaultMapping = $this->getDefaultMapping();
+			$files = $defaultMapping->getFilesForPackage($packageName, $package->getPrettyVersion());
+			if ($files !== FALSE) {
+				$this->processFiles($packageName, $packageDir, $packageAssetsDir, $files);
+				return TRUE;
+			}
+
+			// no files
+			return FALSE;
+		}
+
+
+		/**
+		 * @return DefaultMapping
+		 */
+		private function getDefaultMapping()
+		{
+			if (!isset($this->defaultMapping)) {
+				$this->defaultMapping = new DefaultMapping;
+			}
+			return $this->defaultMapping;
 		}
 
 
