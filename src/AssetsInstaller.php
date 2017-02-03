@@ -117,6 +117,9 @@
 		}
 
 
+		/**
+		 * @return string
+		 */
 		private function getPackageDirectory(Composer\Package\PackageInterface $package, Composer\Config $config)
 		{
 			$vendorDir = $config->get('vendor-dir');
@@ -152,6 +155,13 @@
 		}
 
 
+		/**
+		 * @param  string
+		 * @param  strign
+		 * @param  string
+		 * @param  string
+		 * @return void
+		 */
 		private function processFile($sourceDir, $targetDir, $file, $packageName)
 		{
 			$sourcePath = $sourceDir . '/' . $file;
