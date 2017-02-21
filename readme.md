@@ -24,10 +24,10 @@ Library requires PHP 5.4.0 or later.
 
 ### Packages
 
-* `assets-files` in `extra` section
+* `assets-files` in section `extra`
 	* `true` - symlinks whole package directory
-	* file path - symlinks one file
-	* list of file paths - symlinks files
+	* file path - symlinks one file or directory
+	* list of file paths - symlinks files/directories
 
 Example:
 
@@ -35,20 +35,24 @@ Example:
 {
 	"extra": {
 		"assets-files": [
-			"static/plugin.js", // symlinks file to "assets/package/name/plugin.js"
-			"static/plugin.css", // symlinks file to "assets/package/name/plugin.css"
-			"static/icons.png" // symlinks file to "assets/package/name/icons.png"
+			"static/plugin.js",
+			"static/plugin.css",
+			"static/icons.png"
 		]
 	}
 }
 ```
 
+* `static/plugin.js` - symlinks file to `assets/org/package/plugin.js`
+* `static/plugin.css` - symlinks file to `assets/org/package/plugin.css`
+* `static/icons.png` - symlinks file to `assets/org/package/icons.png`
+
 
 ### Root package
 
 * `assets-dir` - directory for installing of assets, default `assets`, relative to `vendor-dir`
-* `assets-directory` - alias for option `assets-dir`
-* `assets-files` - list of asset files in incompatible packages, override `assets-files` in installed packages
+* `assets-directory` - alias for `assets-dir`
+* `assets-files` - list of asset files in incompatible packages, it overrides `assets-files` from installed packages
 
 Example:
 
@@ -57,18 +61,35 @@ Example:
 	"config": {
 		"assets-dir": "public",
 		"assets-files": {
-			"package/name": true, // symlinks whole package directory to "public/package/name"
-			"package/name2": "js/calendar.js", // symlinks file to "public/package/name2/calendar.js"
-			"package/name3": [
-				"static/plugin.js", // symlinks file to "public/package/name3/plugin.js"
-				"static/plugin.css", // symlinks file to "public/package/name3/plugin.css"
-				"static/icons.png" // symlinks file to "public/package/name3/icons.png"
+			"org/package": true,
+			"org/package2": "js/calendar.js",
+			"org/package3": [
+				"static/plugin.js",
+				"static/plugin.css",
+				"static/icons.png"
 			]
 		}
 	}
 }
 ```
 
+* `org/package` - symlinks whole package directory to `public/org/package`
+* `org/package2` - symlinks file `js/calendar.js` to `public/org/package2/calendar.js`
+* `org/package3`
+	* `static/plugin.js` - symlinks file to `public/org/package3/plugin.js`
+	* `static/plugin.css` - symlinks file to `public/org/package3/plugin.css`
+	* `static/icons.png` - symlinks file to `public/org/package3/icons.png`
+
+
+## Default mapping
+
+Plugin provides default mapping for selected incompatible packages. You can override this mapping in your `composer.json`.
+
+List of packages with default mapping:
+
+* `components/jquery`
+* `nette/forms`
+* `o5/grido`
 
 ------------------------------
 
