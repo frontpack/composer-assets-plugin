@@ -53,6 +53,10 @@ Example:
 * `assets-dir` - directory for installing of assets, default `assets`, relative to `vendor-dir`
 * `assets-directory` - alias for `assets-dir`
 * `assets-files` - list of asset files in incompatible packages, it overrides `assets-files` from installed packages
+* `assets-strategy` - install strategy for assets
+	* `auto` - select strategy by platform (default value)
+	* `copy` - copy all assets, default strategy on Windows
+	* `symlink` - create relative symlinks, default strategy on non-Windows platforms
 
 Example:
 

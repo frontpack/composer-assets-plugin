@@ -9,6 +9,10 @@
 
 	class AssetsInstaller
 	{
+		const STRATEGY_AUTO = 'auto';
+		const STRATEGY_COPY = 'copy';
+		const STRATEGY_SYMLINK = 'symlink';
+
 		/** @var Composer\Composer */
 		private $composer;
 
@@ -48,10 +52,11 @@
 			}
 
 			$this->createDirectory($assetsDirectory);
+			$strategy = $this->getInstallStrategy($config);
 			$hasAssets = FALSE;
 
 			foreach ($packages as $package) {
-				$hasAssets |= $this->processPackage($package, $config, $assetsDirectory);
+				$hasAssets |= $this->processPackage($package, $config, $assetsDirectory, $strategy);
 			}
 
 			if (!$hasAssets) {
@@ -84,12 +89,37 @@
 
 
 		/**
+		 * @return string
+		 */
+		private function getInstallStrategy(Composer\Config $config)
+		{
+			$strategy = $config->get('assets-strategy');
+
+			if ($strategy === NULL) {
+				$strategy = self::STRATEGY_AUTO;
+			}
+
+			if ($strategy === self::STRATEGY_AUTO) {
+				if (Composer\Util\Platform::isWindows()) {
+					$strategy = self::STRATEGY_COPY;
+
+				} else {
+					$strategy = self::STRATEGY_SYMLINK;
+				}
+			}
+
+			return $strategy;
+		}
+
+
+		/**
 		 * @param  Composer\Package\PackageInterface
 		 * @param  Composer\Config
 		 * @param  string
+		 * @param  string
 		 * @return bool
 		 */
-		private function processPackage(Composer\Package\PackageInterface $package, Composer\Config $config, $assetsDirectory)
+		private function processPackage(Composer\Package\PackageInterface $package, Composer\Config $config, $assetsDirectory, $strategy)
 		{
 			$packageName = $package->getPrettyName();
 			$packageDir = $this->getPackageDirectory($package, $config);
@@ -103,7 +133,7 @@
 			$configAssets = $config->get('assets-files');
 
 			if (isset($configAssets[$packageName])) {
-				$this->processFiles($packageName, $packageDir, $packageAssetsDir, $configAssets[$packageName]);
+				$this->processFiles($packageName, $packageDir, $packageAssetsDir, $configAssets[$packageName], $strategy);
 				return TRUE;
 			}
 
@@ -111,7 +141,7 @@
 			$extra = $package->getExtra();
 
 			if (isset($extra['assets-files'])) {
-				$this->processFiles($packageName, $packageDir, $packageAssetsDir, $extra['assets-files']);
+				$this->processFiles($packageName, $packageDir, $packageAssetsDir, $extra['assets-files'], $strategy);
 				return TRUE;
 			}
 
@@ -119,7 +149,7 @@
 			$defaultMapping = $this->getDefaultMapping();
 			$files = $defaultMapping->getFilesForPackage($packageName, $package->getPrettyVersion());
 			if ($files !== FALSE) {
-				$this->processFiles($packageName, $packageDir, $packageAssetsDir, $files);
+				$this->processFiles($packageName, $packageDir, $packageAssetsDir, $files, $strategy);
 				return TRUE;
 			}
 
@@ -158,22 +188,23 @@
 		 * @param  string
 		 * @param  string
 		 * @param  string[]|TRUE
+		 * @param  string
 		 * @return void
 		 */
-		private function processFiles($packageName, $sourceDir, $targetDir, $files)
+		private function processFiles($packageName, $sourceDir, $targetDir, $files, $strategy)
 		{
 			$this->io->write('<info>Manage assets for package ' . $packageName . '</info>');
 
 			if ($files === TRUE) { // whole package
-				$this->createSymlink($sourceDir, $targetDir);
+				$this->createCopy($sourceDir, $targetDir, $strategy);
 
 			} elseif (is_array($files)) {
 				foreach ($files as $file) {
-					$this->processFile($sourceDir, $targetDir, $file, $packageName);
+					$this->processFile($sourceDir, $targetDir, $file, $packageName, $strategy);
 				}
 
 			} elseif (is_string($files)) {
-				$this->processFile($sourceDir, $targetDir, $files, $packageName);
+				$this->processFile($sourceDir, $targetDir, $files, $packageName, $strategy);
 			}
 		}
 
@@ -183,9 +214,10 @@
 		 * @param  strign
 		 * @param  string
 		 * @param  string
+		 * @param  string
 		 * @return void
 		 */
-		private function processFile($sourceDir, $targetDir, $file, $packageName)
+		private function processFile($sourceDir, $targetDir, $file, $packageName, $strategy)
 		{
 			$sourcePath = $sourceDir . '/' . $file;
 
@@ -200,16 +232,17 @@
 				$this->io->write('  - file ' . $file);
 			}
 
-			$this->createSymlink($sourcePath, $targetDir . '/' . basename($file));
+			$this->createCopy($sourcePath, $targetDir . '/' . basename($file), $strategy);
 		}
 
 
 		/**
 		 * @param  string
 		 * @param  string
+		 * @param  string
 		 * @return void
 		 */
-		private function createSymlink($source, $target)
+		private function createCopy($source, $target, $strategy)
 		{
 			$sourcePath = $this->filesystem->normalizePath($source);
 			$targetPath = $this->filesystem->normalizePath($target);
@@ -224,7 +257,16 @@
 				$this->createDirectory($targetDirectory);
 			}
 
-			$this->filesystem->relativeSymlink($sourcePath, $targetPath);
+
+			if ($strategy === self::STRATEGY_COPY) {
+				$this->copy($sourcePath, $targetPath);
+
+			} elseif ($strategy === self::STRATEGY_SYMLINK) {
+				$this->filesystem->relativeSymlink($sourcePath, $targetPath);
+
+			} else {
+				throw new UnknowStategyException("Unknow copy strategy '$strategy' for file '$source'");
+			}
 		}
 
 
@@ -245,5 +287,44 @@
 		private function createDirectory($directory)
 		{
 			@mkdir($directory, 0777, TRUE);
+		}
+
+
+		/**
+		 * Copies a file or directory.
+		 * @param  string
+		 * @param  string
+		 * @return void
+		 * @throws IOException
+		 * @see    https://github.com/nette/utils/blob/master/src/Utils/FileSystem.php
+		 */
+		public function copy($source, $dest)
+		{
+			if (stream_is_local($source) && !file_exists($source)) {
+				throw new IOException("File or directory '$source' not found.");
+
+			} elseif (is_dir($source)) {
+				$this->createDirectory($dest);
+
+				foreach (new \FilesystemIterator($dest) as $item) {
+					$this->filesystem->remove($item->getPathname());
+				}
+
+				foreach ($iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::SELF_FIRST) as $item) {
+					if ($item->isDir()) {
+						$this->createDirectory($dest . '/' . $iterator->getSubPathName());
+
+					} else {
+						$this->copy($item->getPathname(), $dest . '/' . $iterator->getSubPathName());
+					}
+				}
+
+			} else {
+				$this->createDirectory(dirname($dest));
+
+				if (@stream_copy_to_stream(fopen($source, 'r'), fopen($dest, 'w')) === FALSE) { // @ is escalated to exception
+					throw new IOException("Unable to copy file '$source' to '$dest'.");
+				}
+			}
 		}
 	}

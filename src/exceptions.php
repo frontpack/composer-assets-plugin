@@ -11,3 +11,13 @@
 	class FileNotFoundException extends Exception
 	{
 	}
+
+
+	class IOException extends Exception
+	{
+	}
+
+
+	class UnknowStategyException extends Exception
+	{
+	}
