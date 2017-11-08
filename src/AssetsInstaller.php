@@ -277,6 +277,7 @@
 			$this->io->write('<info>Manage assets for package ' . $packageName . '</info>');
 
 			if ($files === TRUE) { // whole package
+				$this->io->write('  - all files');
 				$this->createCopy($sourceDir, $targetDir, $strategy);
 
 			} elseif (is_array($files)) {
