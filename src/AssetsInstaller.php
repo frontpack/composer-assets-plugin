@@ -44,7 +44,8 @@
 			$localRepository = $composer->getRepositoryManager()->getLocalRepository(); // https://github.com/composer/composer/issues/3425#issuecomment-63283548
 
 			$assetsDirectory = $this->getAssetsDirectory($config);
-			$this->deleteDirectory($assetsDirectory);
+			$assetsTargets = $this->getAssetsTargets($config, $assetsDirectory);
+			$directories = $this->prepareDirectories($assetsDirectory, $assetsTargets);
 			$packages = $localRepository->getCanonicalPackages();
 
 			if (empty($packages)) {
@@ -53,15 +54,21 @@
 
 			$this->createDirectory($assetsDirectory);
 			$strategy = $this->getInstallStrategy($config);
-			$hasAssets = FALSE;
 
 			foreach ($packages as $package) {
-				$hasAssets |= $this->processPackage($package, $config, $assetsDirectory, $strategy);
+				$packageName = $package->getPrettyName();
+				$directory = $assetsDirectory;
+				$targetDirectory = $assetsDirectory . '/' . $packageName;
+
+				if (isset($assetsTargets[$packageName])) {
+					$targetDirectory = $assetsTargets[$packageName];
+					$directory = $targetDirectory;
+				}
+
+				$directories[$directory] |= $this->processPackage($package, $config, $targetDirectory, $strategy);
 			}
 
-			if (!$hasAssets) {
-				$this->deleteDirectory($assetsDirectory);
-			}
+			$this->removeUnusedDirectories($directories);
 		}
 
 
@@ -85,6 +92,46 @@
 			}
 
 			return $this->filesystem->normalizePath($assetsDirectory);
+		}
+
+
+		/**
+		 * @return array
+		 */
+		private function getAssetsTargets(Composer\Config $config, $assetsDirectory)
+		{
+			$assetsDirectory = rtrim($assetsDirectory, '/') . '/';
+			$assetsTargets = $config->get('assets-target');
+			$result = array();
+
+			if (!is_array($assetsTargets) && $assetsTargets !== NULL) {
+				$this->io->writeError("<warning>Config option 'assets-target' is invalid.</warning>");
+
+			} elseif (!empty($assetsTargets)) {
+				$usedDirectories = array();
+				$len = strlen($assetsDirectory);
+
+				foreach ($assetsTargets as $packageName => $assetsTarget) {
+					$vendorDir = $config->get('vendor-dir');
+
+					if (!$this->filesystem->isAbsolutePath($assetsTarget)) {
+						$assetsTarget = $this->filesystem->normalizePath($vendorDir . '/../' . $assetsTarget);
+					}
+
+					if (isset($usedDirectories[$assetsTarget])) {
+						throw new ConflictException("Directory '$assetsTarget' is already used for package {$usedDirectories[$assetsTarget]}.");
+					}
+
+					if (strncmp($assetsDirectory, rtrim($assetsTarget, '/') . '/', $len) === 0) {
+						throw new ConflictException("Target '$assetsTarget' for package $packageName is in conflict with assets directory '$assetsDirectory'.");
+					}
+
+					$usedDirectories[$assetsDirectory] = $packageName;
+					$result[$packageName] = $assetsTarget;
+				}
+			}
+
+			return $result;
 		}
 
 
@@ -113,17 +160,51 @@
 
 
 		/**
+		 * @param  string
+		 * @param  array
+		 * @return array  [directory => hasAssets]
+		 */
+		private function prepareDirectories($assetsDirectory, array $assetsTargets)
+		{
+			$directories = array();
+			$directories[$assetsDirectory] = FALSE;
+			$this->deleteDirectory($assetsDirectory);
+
+			foreach ($assetsTargets as $packageName => $assetsTarget) {
+				$directories[$assetsTarget] = FALSE;
+				$this->deleteDirectory($assetsTarget);
+			}
+
+			return $directories;
+		}
+
+
+		/**
+		 * @param  array
+		 * @return void
+		 */
+		private function removeUnusedDirectories(array $directories)
+		{
+			foreach ($directories as $directory => $hasAssets) {
+				if (!$hasAssets) {
+					$this->deleteDirectory($assetsDirectory);
+				}
+			}
+		}
+
+
+		/**
 		 * @param  Composer\Package\PackageInterface
 		 * @param  Composer\Config
 		 * @param  string
 		 * @param  string
 		 * @return bool
 		 */
-		private function processPackage(Composer\Package\PackageInterface $package, Composer\Config $config, $assetsDirectory, $strategy)
+		private function processPackage(Composer\Package\PackageInterface $package, Composer\Config $config, $targetDirectory, $strategy)
 		{
 			$packageName = $package->getPrettyName();
 			$packageDir = $this->getPackageDirectory($package, $config);
-			$packageAssetsDir = $assetsDirectory . '/' . $packageName;
+			$packageAssetsDir = $targetDirectory;
 
 			if (!is_dir($packageDir)) {
 				return FALSE;

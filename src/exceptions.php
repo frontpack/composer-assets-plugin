@@ -8,6 +8,11 @@
 	}
 
 
+	class ConflictException extends Exception
+	{
+	}
+
+
 	class FileNotFoundException extends Exception
 	{
 	}

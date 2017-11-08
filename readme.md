@@ -57,6 +57,7 @@ Example:
 	* `auto` - select strategy by platform (default value)
 	* `copy` - copy all assets, default strategy on Windows
 	* `symlink` - create relative symlinks, default strategy on non-Windows platforms
+* `assets-target` - target directory for specific packages, relative to `vendor-dir`, must be out of `assets-dir`
 
 Example:
 
@@ -72,6 +73,9 @@ Example:
 				"static/plugin.css",
 				"static/icons.png"
 			]
+		},
+		"assets-target": {
+			"ckeditor/ckeditor": "admin/wysiwyg"
 		}
 	}
 }
@@ -83,6 +87,7 @@ Example:
 	* `static/plugin.js` - symlinks file to `public/org/package3/plugin.js`
 	* `static/plugin.css` - symlinks file to `public/org/package3/plugin.css`
 	* `static/icons.png` - symlinks file to `public/org/package3/icons.png`
+* `ckeditor/ckeditor` - symlinks files to `admin/wysiwyg`
 
 
 ## Default mapping
