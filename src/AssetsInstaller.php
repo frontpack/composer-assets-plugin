@@ -80,11 +80,11 @@
 				$assetsDirectory = 'assets';
 			}
 
-			if ($this->filesystem->isAbsolutePath($assetsDirectory)) {
-				return $assetsDirectory;
+			if (!$this->filesystem->isAbsolutePath($assetsDirectory)) {
+				$assetsDirectory = $config->get('vendor-dir') . '/../' . $assetsDirectory;
 			}
 
-			return $this->filesystem->normalizePath($config->get('vendor-dir') . '/../' . $assetsDirectory);
+			return $this->filesystem->normalizePath($assetsDirectory);
 		}
 
 
