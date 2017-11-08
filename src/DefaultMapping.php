@@ -49,6 +49,10 @@
 		protected function getDefaultMapping()
 		{
 			return array(
+				'ckeditor/ckeditor' => array(
+					'*' => TRUE,
+				),
+
 				'components/jquery' => array(
 					'*' => array(
 						'jquery.js'
