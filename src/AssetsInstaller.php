@@ -226,7 +226,7 @@
 			}
 
 			if (is_dir($sourcePath)) {
-				$this->io->write('  - directory ' . $file . '/');
+				$this->io->write('  - directory ' . rtrim($file, '/') . '/');
 
 			} else {
 				$this->io->write('  - file ' . $file);
