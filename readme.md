@@ -96,6 +96,7 @@ Plugin provides default mapping for selected incompatible packages. You can over
 
 List of packages with default mapping:
 
+* `ckeditor/ckeditor`
 * `components/jquery`
 * `nette/forms`
 * `o5/grido`
