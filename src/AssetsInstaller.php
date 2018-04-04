@@ -187,7 +187,7 @@
 		{
 			foreach ($directories as $directory => $hasAssets) {
 				if (!$hasAssets) {
-					$this->deleteDirectory($assetsDirectory);
+					$this->deleteDirectory($directory);
 				}
 			}
 		}
