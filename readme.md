@@ -103,6 +103,16 @@ List of packages with default mapping:
 * `nette/forms`
 * `o5/grido`
 
+
+## Where find supported packages?
+
+Some libraries and packages support Composer by default. For other exists shim-repositories:
+
+* https://github.com/components
+* https://github.com/frontpack
+
+Always you can search packages on [Packagist](https://packagist.org/).
+
 ------------------------------
 
 License: [New BSD License](license.md)
