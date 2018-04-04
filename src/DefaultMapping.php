@@ -30,7 +30,7 @@
 					return $files;
 				}
 
-				$pattern = '#' . strtr(preg_quote($mask, '#'), array(
+				$pattern = '#' . strtr(preg_quote($version, '#'), array(
 					'\*' => '.*',
 				)) . '#i';
 
