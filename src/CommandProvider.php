@@ -1,16 +1,15 @@
 <?php
 
-	namespace Frontpack\ComposerAssetsPlugin;
+namespace Frontpack\ComposerAssetsPlugin;
 
-	use Composer;
+use Composer\Plugin\Capability\CommandProvider as ComposerCommandProvider;
 
-
-	class CommandProvider implements Composer\Plugin\Capability\CommandProvider
-	{
-		public function getCommands()
-		{
-			return array(
-				new RefreshAssetsCommand,
-			);
-		}
-	}
+class CommandProvider implements ComposerCommandProvider
+{
+    public function getCommands()
+    {
+        return array(
+            new RefreshAssetsCommand(),
+        );
+    }
+}

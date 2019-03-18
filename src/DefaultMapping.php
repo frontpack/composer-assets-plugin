@@ -1,75 +1,74 @@
 <?php
 
-	namespace Frontpack\ComposerAssetsPlugin;
+namespace Frontpack\ComposerAssetsPlugin;
+
+class DefaultMapping
+{
+    /** @var array $mapping */
+    protected $mapping;
+
+    public function __construct()
+    {
+        $this->mapping = $this->getDefaultMapping();
+    }
 
 
-	class DefaultMapping
-	{
-		protected $mapping;
+    /**
+     * @param  string
+     * @param  string
+     * @return string[]|FALSE
+     */
+    public function getFilesForPackage($packageName, $packageVersion)
+    {
+        if (!isset($this->mapping[$packageName])) {
+            return false;
+        }
+
+        foreach ($this->mapping[$packageName] as $version => $files) {
+            if ($version === '*' || $version === '') {
+                return $files;
+            }
+
+            $pattern = '#' . strtr(preg_quote($version, '#'), array(
+                    '\*' => '.*',
+                )) . '#i';
+
+            if (preg_match($pattern, $packageVersion)) {
+                return $files;
+            }
+        }
+
+        return false;
+    }
 
 
-		public function __construct()
-		{
-			$this->mapping = $this->getDefaultMapping();
-		}
+    /**
+     * @return array
+     */
+    protected function getDefaultMapping()
+    {
+        return array(
+            'ckeditor/ckeditor' => array(
+                '*' => true,
+            ),
 
+            'components/jquery' => array(
+                '*' => array(
+                    'jquery.js'
+                ),
+            ),
 
-		/**
-		 * @param  string
-		 * @param  string
-		 * @return string[]|FALSE
-		 */
-		public function getFilesForPackage($packageName, $packageVersion)
-		{
-			if (!isset($this->mapping[$packageName])) {
-				return FALSE;
-			}
+            'nette/forms' => array(
+                '*' => array(
+                    'src/assets/netteForms.js',
+                ),
+            ),
 
-			foreach ($this->mapping[$packageName] as $version => $files) {
-				if ($version === '*' || $version === '') {
-					return $files;
-				}
-
-				$pattern = '#' . strtr(preg_quote($version, '#'), array(
-					'\*' => '.*',
-				)) . '#i';
-
-				if (preg_match($pattern, $packageVersion)) {
-					return $files;
-				}
-			}
-
-			return FALSE;
-		}
-
-
-		/**
-		 * @return array
-		 */
-		protected function getDefaultMapping()
-		{
-			return array(
-				'ckeditor/ckeditor' => array(
-					'*' => TRUE,
-				),
-
-				'components/jquery' => array(
-					'*' => array(
-						'jquery.js'
-					),
-				),
-
-				'nette/forms' => array(
-					'*' => array(
-						'src/assets/netteForms.js',
-					),
-				),
-
-				'o5/grido' => array(
-					'*' => array(
-						'assets/dist',
-					),
-				),
-			);
-		}
-	}
+            'o5/grido' => array(
+                '*' => array(
+                    'assets/dist',
+                ),
+            ),
+        );
+    }
+}

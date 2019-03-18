@@ -1,57 +1,61 @@
 <?php
 
-	namespace Frontpack\ComposerAssetsPlugin;
+namespace Frontpack\ComposerAssetsPlugin;
 
-	use Composer;
-	use Composer\Installer\PackageEvent;
-	use Composer\Installer\PackageEvents;
+use Composer\Composer;
+use Composer\IO\IOInterface;
+use Composer\Script\Event;
+use Composer\Script\ScriptEvents;
+use Composer\Util\Filesystem;
+use Composer\EventDispatcher\EventSubscriberInterface;
+use Composer\Plugin\Capable;
+use Composer\Plugin\PluginInterface;
 
+class ComposerAssetsPlugin implements PluginInterface,EventSubscriberInterface, Capable
+{
+    /** @var IOInterface */
+    private $io;
 
-	class ComposerAssetsPlugin implements Composer\Plugin\PluginInterface, Composer\EventDispatcher\EventSubscriberInterface, Composer\Plugin\Capable
-	{
-		/** @var Composer\IO\IOInterface */
-		private $io;
-
-		/** @var Composer\Util\Filesystem */
-		private $filesystem;
-
-
-		/**
-		 * @return void
-		 */
-		public function activate(Composer\Composer $composer, Composer\IO\IOInterface $io)
-		{
-			$this->io = $io;
-			$this->filesystem = new Composer\Util\Filesystem;
-		}
+    /** @var Filesystem */
+    private $filesystem;
 
 
-		public function getCapabilities()
-		{
-			return array(
-				'Composer\Plugin\Capability\CommandProvider' => 'Frontpack\ComposerAssetsPlugin\CommandProvider',
-			);
-		}
+    /**
+     * @return void
+     */
+    public function activate(Composer $composer, IOInterface $io)
+    {
+        $this->io = $io;
+        $this->filesystem = new Filesystem;
+    }
 
 
-		/**
-		 * @return array
-		 */
-		public static function getSubscribedEvents()
-		{
-			return array(
-				Composer\Script\ScriptEvents::POST_UPDATE_CMD => 'processScriptEvent',
-				Composer\Script\ScriptEvents::POST_INSTALL_CMD => 'processScriptEvent',
-			);
-		}
+    public function getCapabilities()
+    {
+        return array(
+            'Composer\Plugin\Capability\CommandProvider' => 'Frontpack\ComposerAssetsPlugin\CommandProvider',
+        );
+    }
 
 
-		/**
-		 * @return void
-		 */
-		public function processScriptEvent(Composer\Script\Event $event)
-		{
-			$installer = new AssetsInstaller($event->getComposer(), $this->io);
-			$installer->process();
-		}
-	}
+    /**
+     * @return array
+     */
+    public static function getSubscribedEvents()
+    {
+        return array(
+            ScriptEvents::POST_UPDATE_CMD => 'processScriptEvent',
+            ScriptEvents::POST_INSTALL_CMD => 'processScriptEvent',
+        );
+    }
+
+
+    /**
+     * @return void
+     */
+    public function processScriptEvent(Event $event)
+    {
+        $installer = new AssetsInstaller($event->getComposer(), $this->io);
+        $installer->process();
+    }
+}
