@@ -26,6 +26,7 @@ Library requires PHP 5.4.0 or later.
 
 ### Packages
 
+* `assets-target` in section `extra`, target path relative to assets-dir, optional (composer package name used by default)
 * `assets-files` in section `extra`
 	* `true` - symlinks whole package directory
 	* file path - symlinks one file or directory

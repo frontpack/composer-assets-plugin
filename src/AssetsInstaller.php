@@ -58,7 +58,13 @@
 			foreach ($packages as $package) {
 				$packageName = $package->getPrettyName();
 				$directory = $assetsDirectory;
-				$targetDirectory = $assetsDirectory . '/' . $packageName;
+
+                $extra = $package->getExtra();
+				if (isset($extra['assets-target'])) {
+					$targetDirectory = $assetsDirectory . '/' . $extra['assets-target'];
+				} else {
+					$targetDirectory = $assetsDirectory . '/' . $packageName;
+				}				
 
 				if (isset($assetsTargets[$packageName])) {
 					$targetDirectory = $assetsTargets[$packageName];
