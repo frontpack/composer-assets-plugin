@@ -65,7 +65,7 @@
                     $targetDirectory = $extra['assets-target'];
                     if ($this->filesystem->isAbsolutePath($targetDirectory)) {
 					    $targetDirectory = $this->filesystem->normalizePath($vendorDir . '/..' . $targetDirectory);
-                        $directory = $targetDirectory;
+                        //$directory = $targetDirectory;
                     } else {
                         $targetDirectory = $assetsDirectory . '/' . $targetDirectory;
                     }

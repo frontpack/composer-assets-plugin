@@ -82,9 +82,8 @@ Relative path specified, assets files will be copied to `assets-dir`/package1
 }
 
 Absolute path specified, assets files will be copied to `project-dir`/templates/default/js, where `project-dir` is parent directory of composer `vendor-dir`
-WARNING: specified directory should not contains any other files, than assets files of this package or it will be deleted on package removal!
-
-`assets-target` value of any package can be redefined in root package config
+IMPORTANT: Assets files will not be cleaned on package update or removing, if default absolute path for `assets-target` is used. 
+If you need automatic cleanup of assets files for this package you must redefine `assets-target` for this package in root package config.
 
 ### Root package
 
