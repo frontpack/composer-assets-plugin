@@ -26,7 +26,6 @@ Library requires PHP 5.4.0 or later.
 
 ### Packages
 
-* `assets-target` in section `extra`, target path relative to assets-dir, optional (composer package name used by default)
 * `assets-files` in section `extra`
 	* `true` - symlinks whole package directory
 	* file path - symlinks one file or directory
@@ -50,6 +49,42 @@ Example:
 * `static/plugin.css` - symlinks file to `assets/org/package/plugin.css`
 * `static/icons.png` - symlinks file to `assets/org/package/icons.png`
 
+By default, assets files stored in `assets-dir` specified in root package composer config. Package name used as path, for example, for package 
+`package-owner`/`package-name` following path will be used by default: `assets-dir`/`package-owner`/`package-name`.
+You can specify different default path for package with option `assets-target` in section `extra`:
+
+* `assets-target` target path to copy assets files, optional
+    * if relative path specified it will be related to `assets-dir`
+    * if absolute path specified it will be related to parent of `vendor-dir`
+
+Example:
+
+``` json
+{
+    "extra": {
+        "assets-target": "package1",
+        "assets-files": [
+               ... some assets files ...
+        ]
+    }
+}
+
+Relative path specified, assets files will be copied to `assets-dir`/package1
+
+``` json
+{
+    "extra": {
+        "assets-target": "/templates/default/js",
+        "assets-files": [
+               ... some assets files ...
+        ]
+    }
+}
+
+Absolute path specified, assets files will be copied to `project-dir`/templates/default/js, where `project-dir` is parent directory of composer `vendor-dir`
+WARNING: specified directory should not contains any other files, than assets files of this package or it will be deleted on package removal!
+
+`assets-target` value of any package can be redefined in root package config
 
 ### Root package
 
