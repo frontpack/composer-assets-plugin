@@ -14,7 +14,7 @@ Use [Composer](http://getcomposer.org/):
 composer require frontpack/composer-assets-plugin
 ```
 
-Library requires PHP 5.4.0 or later.
+Library requires PHP 5.6.0 or later.
 
 
 ## Commands
