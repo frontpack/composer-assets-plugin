@@ -399,7 +399,7 @@
 		 */
 		private function createDirectory($directory)
 		{
-			@mkdir($directory, 0777, TRUE);
+			$this->filesystem->ensureDirectoryExists($directory);
 		}
 
 
