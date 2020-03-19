@@ -286,7 +286,14 @@
 				}
 
 			} elseif (is_string($files)) {
-				$this->processFile($sourceDir, $targetDir, $files, $packageName, $strategy);
+				if (is_dir($sourceDir . '/' . $files)) {
+					foreach (new \FilesystemIterator($sourceDir . '/' . $files) as $file) {
+						$this->processFile($sourceDir, $targetDir, $files . '/' . $file->getBasename(), $packageName, $strategy);
+					}
+
+				} else {
+					$this->processFile($sourceDir, $targetDir, $files, $packageName, $strategy);
+				}
 			}
 		}
 

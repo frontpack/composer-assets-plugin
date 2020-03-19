@@ -49,6 +49,18 @@ Example:
 * `static/plugin.css` - symlinks file to `assets/org/package/plugin.css`
 * `static/icons.png` - symlinks file to `assets/org/package/icons.png`
 
+Or you can use simple:
+
+``` json
+{
+	"extra": {
+		"assets-files": "static"
+	}
+}
+```
+
+with same result.
+
 
 ### Root package
 
