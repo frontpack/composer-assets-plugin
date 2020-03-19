@@ -77,7 +77,7 @@ Example:
 
 ``` json
 {
-	"config": {
+	"extra": {
 		"assets-dir": "public",
 		"assets-files": {
 			"org/package": true,

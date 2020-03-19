@@ -41,10 +41,11 @@
 		{
 			$composer = $this->composer;
 			$config = $composer->getConfig();
+			$extra = $composer->getPackage()->getExtra();
 			$localRepository = $composer->getRepositoryManager()->getLocalRepository(); // https://github.com/composer/composer/issues/3425#issuecomment-63283548
 
-			$assetsDirectory = $this->getAssetsDirectory($config);
-			$assetsTargets = $this->getAssetsTargets($config, $assetsDirectory);
+			$assetsDirectory = $this->getAssetsDirectory($config, $extra);
+			$assetsTargets = $this->getAssetsTargets($config, $extra, $assetsDirectory);
 			$directories = $this->prepareDirectories($assetsDirectory, $assetsTargets);
 			$packages = $localRepository->getCanonicalPackages();
 
@@ -53,7 +54,7 @@
 			}
 
 			$this->createDirectory($assetsDirectory);
-			$strategy = $this->getInstallStrategy($config);
+			$strategy = $this->getInstallStrategy($config, $extra);
 
 			foreach ($packages as $package) {
 				$packageName = $package->getPrettyName();
@@ -65,7 +66,7 @@
 					$directory = $targetDirectory;
 				}
 
-				$directories[$directory] |= $this->processPackage($package, $config, $targetDirectory, $strategy);
+				$directories[$directory] |= $this->processPackage($package, $config, $extra, $targetDirectory, $strategy);
 			}
 
 			$this->removeUnusedDirectories($directories);
@@ -75,8 +76,14 @@
 		/**
 		 * @return string
 		 */
-		private function getAssetsDirectory(Composer\Config $config)
+		private function getAssetsDirectory(Composer\Config $config, array $extra)
 		{
+			$assetsDirectory = isset($extra['assets-dir']) ? $extra['assets-dir'] : NULL;
+
+			if ($assetsDirectory === NULL) {
+				$assetsDirectory = isset($extra['assets-directory']) ? $extra['assets-directory'] : NULL;
+			}
+
 			$assetsDirectory = $config->get('assets-dir');
 
 			if ($assetsDirectory === NULL) {
@@ -98,14 +105,19 @@
 		/**
 		 * @return array
 		 */
-		private function getAssetsTargets(Composer\Config $config, $assetsDirectory)
+		private function getAssetsTargets(Composer\Config $config, array $extra, $assetsDirectory)
 		{
 			$assetsDirectory = rtrim($assetsDirectory, '/') . '/';
-			$assetsTargets = $config->get('assets-target');
+			$assetsTargets = isset($extra['assets-target']) ? $extra['assets-target'] : NULL;
+
+			if ($assetsTargets === NULL) {
+				$assetsTargets = $config->get('assets-target');
+			}
+
 			$result = array();
 
 			if (!is_array($assetsTargets) && $assetsTargets !== NULL) {
-				$this->io->writeError("<warning>Config option 'assets-target' is invalid.</warning>");
+				$this->io->writeError("<warning>Option 'assets-target' is invalid.</warning>");
 
 			} elseif (!empty($assetsTargets)) {
 				$usedDirectories = array();
@@ -138,9 +150,13 @@
 		/**
 		 * @return string
 		 */
-		private function getInstallStrategy(Composer\Config $config)
+		private function getInstallStrategy(Composer\Config $config, array $extra)
 		{
-			$strategy = $config->get('assets-strategy');
+			$strategy = isset($extra['assets-strategy']) ? $extra['assets-strategy'] : NULL;
+
+			if ($strategy === NULL) {
+				$strategy = $config->get('assets-strategy');
+			}
 
 			if ($strategy === NULL) {
 				$strategy = self::STRATEGY_AUTO;
@@ -200,7 +216,7 @@
 		 * @param  string
 		 * @return bool
 		 */
-		private function processPackage(Composer\Package\PackageInterface $package, Composer\Config $config, $targetDirectory, $strategy)
+		private function processPackage(Composer\Package\PackageInterface $package, Composer\Config $config, array $rootExtra, $targetDirectory, $strategy)
 		{
 			$packageName = $package->getPrettyName();
 			$packageDir = $this->getPackageDirectory($package, $config);
@@ -211,7 +227,11 @@
 			}
 
 			// root config
-			$configAssets = $config->get('assets-files');
+			$configAssets = isset($rootExtra['assets-files']) ? $rootExtra['assets-files'] : NULL;
+
+			if ($configAssets === NULL) {
+				$configAssets = $config->get('assets-files');
+			}
 
 			if (isset($configAssets[$packageName])) {
 				$this->processFiles($packageName, $packageDir, $packageAssetsDir, $configAssets[$packageName], $strategy);
