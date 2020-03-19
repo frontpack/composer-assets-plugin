@@ -88,7 +88,9 @@
 				$assetsDirectory = isset($extra['assets-directory']) ? $extra['assets-directory'] : NULL;
 			}
 
-			$assetsDirectory = $config->get('assets-dir');
+			if ($assetsDirectory === NULL) {
+				$assetsDirectory = $config->get('assets-dir');
+			}
 
 			if ($assetsDirectory === NULL) {
 				$assetsDirectory = $config->get('assets-directory');
