@@ -51,7 +51,7 @@
 		 */
 		public function processScriptEvent(Composer\Script\Event $event)
 		{
-			$installer = new AssetsInstaller($event->getComposer(), $this->io);
+			$installer = new AssetsInstaller($event->getComposer(), $this->io, $this->filesystem);
 			$installer->process();
 		}
 	}

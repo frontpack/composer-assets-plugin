@@ -17,7 +17,7 @@
 
 		protected function execute(InputInterface $input, OutputInterface $output)
 		{
-			$installer = new AssetsInstaller($this->getComposer(), $this->getIO());
+			$installer = new AssetsInstaller($this->getComposer(), $this->getIO(), new Composer\Util\Filesystem);
 			$installer->process();
 		}
 	}

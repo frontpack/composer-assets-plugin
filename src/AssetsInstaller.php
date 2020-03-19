@@ -26,11 +26,15 @@
 		private $defaultMapping;
 
 
-		public function __construct(Composer\Composer $composer, Composer\IO\IOInterface $io)
+		public function __construct(
+			Composer\Composer $composer,
+			Composer\IO\IOInterface $io,
+			Composer\Util\Filesystem $filesystem
+		)
 		{
 			$this->composer = $composer;
 			$this->io = $io;
-			$this->filesystem = new Composer\Util\Filesystem;
+			$this->filesystem = $filesystem;
 		}
 
 
