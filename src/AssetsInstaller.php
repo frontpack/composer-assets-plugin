@@ -314,7 +314,7 @@
 			} elseif (is_string($files)) {
 				if (is_dir($sourceDir . '/' . $files)) {
 					foreach (new \FilesystemIterator($sourceDir . '/' . $files) as $file) {
-						$this->processFile($sourceDir, $targetDir, $files . '/' . $file->getBasename(), $packageName, $strategy);
+						$this->processFile($sourceDir, $targetDir, rtrim($files, '/') . '/' . $file->getBasename(), $packageName, $strategy);
 					}
 
 				} else {
