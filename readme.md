@@ -110,6 +110,7 @@ Plugin provides default mapping for selected incompatible packages. You can over
 
 List of packages with default mapping:
 
+* `bower-asset/tiny-slider`
 * `ckeditor/ckeditor`
 * `components/jquery`
 * `nette/forms`

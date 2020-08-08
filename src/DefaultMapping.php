@@ -49,6 +49,13 @@
 		protected function getDefaultMapping()
 		{
 			return array(
+				'bower-asset/tiny-slider' => array(
+					'*' => array(
+						'dist/tiny-slider.css',
+						'dist/tiny-slider.js',
+					),
+				),
+
 				'ckeditor/ckeditor' => array(
 					'*' => TRUE,
 				),
