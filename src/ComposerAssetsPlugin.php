@@ -26,6 +26,22 @@
 		}
 
 
+		/**
+		 * @return void
+		 */
+		public function deactivate(Composer\Composer $composer, Composer\IO\IOInterface $io)
+		{
+		}
+
+
+		/**
+		 * @return void
+		 */
+		public function uninstall(Composer\Composer $composer, Composer\IO\IOInterface $io)
+		{
+		}
+
+
 		public function getCapabilities()
 		{
 			return array(
