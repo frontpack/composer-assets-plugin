@@ -2,8 +2,17 @@
 
 Composer plugin for installing assets.
 
-<a href="https://www.patreon.com/bePatron?u=9680759"><img src="https://c5.patreon.com/external/logo/become_a_patron_button.png" alt="Become a Patron!" height="35"></a>
-<a href="https://www.paypal.me/janpecha/5eur"><img src="https://buymecoffee.intm.org/img/button-paypal-white.png" alt="Buy me a coffee" height="35"></a>
+
+Support Me
+----------
+
+Do you like Composer Assets Plugin? Are you looking forward to the **new features**?
+
+<a href="https://www.paypal.com/donate?hosted_button_id=A3VQYFGCF99FU"><img src="https://buymecoffee.intm.org/img/composer-assets-plugin-paypal-donate@2x.png" alt="PayPal or credit/debit card" width="254" height="248"></a>
+
+<img src="https://buymecoffee.intm.org/img/bitcoin@2x.png" alt="Bitcoin" height="32"> `bc1qvhp0awxa54hndxfjctwyrs27q5ryy4337vlwsd`
+
+Thank you!
 
 
 ## Installation
