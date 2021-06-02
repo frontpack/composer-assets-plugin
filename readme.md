@@ -122,6 +122,7 @@ List of packages with default mapping:
 * `bower-asset/tiny-slider`
 * `ckeditor/ckeditor`
 * `components/jquery`
+* `enyo/dropzone`
 * `nette/forms`
 * `o5/grido`
 

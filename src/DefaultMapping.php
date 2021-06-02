@@ -66,6 +66,14 @@
 					),
 				),
 
+				'enyo/dropzone' => array(
+					'*' => array(
+						'dist/dropzone.js',
+						'dist/basic.css',
+						'dist/dropzone.css'
+					),
+				),
+
 				'nette/forms' => array(
 					'*' => array(
 						'src/assets/netteForms.js',
