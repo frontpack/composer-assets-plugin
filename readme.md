@@ -37,7 +37,7 @@ Library requires PHP 5.6.0 or later.
 
 * `assets-files` in section `extra`
 	* `true` - symlinks whole package directory
-	* file path - symlinks one file or directory
+	* file path - symlinks one file or content of directory
 	* list of file paths - symlinks files/directories
 
 Example:
