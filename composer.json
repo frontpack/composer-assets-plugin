@@ -9,6 +9,9 @@
 			"homepage": "http://www.janpecha.cz/"
 		}
 	],
+	"funding": [
+		{"type": "other", "url": "https://www.janpecha.cz/donate/composer-assets-plugin/"}
+	],
 	"autoload": {
 		"classmap": ["src/"]
 	},
