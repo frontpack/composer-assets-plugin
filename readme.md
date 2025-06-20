@@ -1,5 +1,9 @@
 # Composer Assets Plugin
 
+[![Downloads this Month](https://img.shields.io/packagist/dm/frontpack/composer-assets-plugin.svg)](https://packagist.org/packages/frontpack/composer-assets-plugin)
+[![Latest Stable Version](https://poser.pugx.org/frontpack/composer-assets-plugin/v/stable)](https://github.com/frontpack/composer-assets-plugin/releases)
+[![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/frontpack/composer-assets-plugin/blob/master/license.md)
+
 Composer plugin for installing assets.
 
 
