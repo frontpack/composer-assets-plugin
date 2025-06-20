@@ -16,8 +16,8 @@
 		"classmap": ["src/"]
 	},
 	"require": {
-		"php": ">=5.6.0",
-		"composer-plugin-api": "^1.0 || ^2.0"
+		"php": "8.0 - 8.4",
+		"composer-plugin-api": "^2.0"
 	},
 	"extra": {
 		"class": "Frontpack\\ComposerAssetsPlugin\\ComposerAssetsPlugin"
